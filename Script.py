@@ -1,5 +1,5 @@
 class script(object):
-    START_TXT = """<b>Hi I am a File Sharing Bot.\nTo Make use of me You Need to Join My Group or Add me to Your Group.\n\nJust Sent File Name you Want & I will Try Finding it for You.</b>"""
+    START_TXT = """<b>Hi, I am a File Sharing Bot.\nTo Make use of me You Need to Join My Group or Add me to Your Group.\n\nJust Sent File Name you Want & I will Try Finding it for You.</b>"""
 
     MY_ABOUT_TXT = """★ Server: <a href=https://www.heroku.com>Heroku</a>
 ★ Database: <a href=https://www.mongodb.com>MongoDB</a>
