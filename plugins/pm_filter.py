@@ -394,7 +394,7 @@ async def advantage_spoll_choker(bot, query):
         await auto_filter(bot, query, k)
     else:
         await bot.send_message(LOG_CHANNEL, script.NO_RESULT_TXT.format(query.message.chat.title, query.message.chat.id, query.from_user.mention, search))
-        k = await query.message.edit(f"👋 Hello {query.from_user.mention},\n\nI don't find <b>'{search}'</b> in my database. 😔\n\n\nThis may be Happen if you add Symbols and markup to Search Query.\nIf Your Search text Have anything like :;.-,\'\n\n🔥 PRO Tip Try Sending 👉 Telegram@APDBackup{search} 👈 in This Chat this Mighat Give you Hidden Results.")
+        k = await query.message.edit(f"👋 Hello {query.from_user.mention} Report has sent to Admins that,\n\nI didn't find <b>'{search}'</b> in my database. 😔\n\n\nThis may be Happen if you add Symbols and Markup to Search Query.\nIf Your Search text Have anything like `:;.-,\'`\n\n🔥 PRO Tip Try Sending 👉 `Telegram@APDBackup{search}` 👈 in This Chat this Mighat Give you Hidden Results.\nIf You Have tried Our Pro Tip Still Unable to find Files Wait for few Hours Our Admins will Add Them ASAP.")
         await asyncio.sleep(60)
         await k.delete()
         try:
@@ -1166,7 +1166,7 @@ async def advantage_spell_chok(message):
     buttons.append(
         [InlineKeyboardButton("🚫 ᴄʟᴏsᴇ 🚫", callback_data="close_data")]
     )
-    s = await message.reply_photo(photo=random.choice(PICS), caption=f"👋 Hello {message.from_user.mention},\n\nI couldn't find the <b>'{search}'</b> you requested.\nSelect if you meant one of these? 👇", reply_markup=InlineKeyboardMarkup(buttons), reply_to_message_id=message.id)
+    s = await message.reply_photo(photo=random.choice(PICS), caption=f"👋 Hello {message.from_user.mention},\n\nI couldn't find the <b>'{search}'</b> you requested.\n\nPlease Remove any Commas, Full Stop or Dash from Search Query for Better Results.\n\nSelect if you meant one of these? 👇", reply_markup=InlineKeyboardMarkup(buttons), reply_to_message_id=message.id)
     await asyncio.sleep(300)
     await s.delete()
     try:
