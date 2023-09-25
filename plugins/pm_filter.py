@@ -394,7 +394,7 @@ async def advantage_spoll_choker(bot, query):
         await auto_filter(bot, query, k)
     else:
         await bot.send_message(LOG_CHANNEL, script.NO_RESULT_TXT.format(query.message.chat.title, query.message.chat.id, query.from_user.mention, search))
-        k = await query.message.edit(f"👋 Hello {query.from_user.mention},\n\nI don't find <b>'{search}'</b> in my database. 😔")
+        k = await query.message.edit(f"👋 Hello {query.from_user.mention},\n\nI don't find <b>'{search}'</b> in my database. 😔\n\n\nThis may be Happen if you add Symbols and markup to Search Query.\nIf Your Search text Have anything like :;.-,\'\n\n🔥 PRO Tip Try Sending 👉 Telegram@APDBackup{search} 👈 in This Chat this Mighat Give you Hidden Results.")
         await asyncio.sleep(60)
         await k.delete()
         try:
