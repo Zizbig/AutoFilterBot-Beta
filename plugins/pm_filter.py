@@ -394,7 +394,7 @@ async def advantage_spoll_choker(bot, query):
         await auto_filter(bot, query, k)
     else:
         await bot.send_message(LOG_CHANNEL, script.NO_RESULT_TXT.format(query.message.chat.title, query.message.chat.id, query.from_user.mention, search))
-        k = await query.message.edit(f"👋 Hello {query.from_user.mention} Report has sent to Admins that,\n\nI didn't find <b>'{search}'</b> in my database. 😔\n\nThis may be Happen if you add Symbols and Markup to Search Query.\nIf Your Search text Have anything like `:;.-,\'`\n\n🔥 PRO Tip:-\nTry Sending 👉 `Telegram@APDBackup{search}` 👈 in This Chat.\nThis Mighat Give you Hidden Results.\n• If You Have tried Our Pro Tip Still Unable to find Files Wait for few Hours Our Admins will Add Them ASAP. 🫡")
+        k = await query.message.edit(f"👋 Hello {query.from_user.mention} Report has sent to Admins that,\n\nI didn't find <b>'{search}'</b> in my database. 😔\n\nThis may be Happen if you add Symbols and Markup to Search Query.\nIf Your Search text Have anything like `:;.-,\'`\n\n🔥 PRO Tip:-\nTry Sending 👉 `Telegram@APDBackup{search}` 👈 in This Chat.\nThis Might Give you Hidden Results.\n• If You Have tried Our Pro Tip Still Unable to find Files Wait for few Hours Our Admins will Add Them ASAP. 🫡")
         await asyncio.sleep(60)
         await k.delete()
         try:
