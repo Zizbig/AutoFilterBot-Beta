@@ -49,7 +49,7 @@ async def answer(bot, query):
                                                   offset=offset)
 
     for file in files:
-        f_caption=file_name.format(
+        f_caption=FILE_CAPTION.format(
             file_name=file.file_name,
             file_size=get_size(file.file_size),
             caption=file.caption
