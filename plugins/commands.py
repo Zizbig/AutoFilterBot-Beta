@@ -26,7 +26,12 @@ async def start(client, message):
             InlineKeyboardButton('⚡️ Updates Channel ⚡️', url=UPDATES_LINK),
             InlineKeyboardButton('🔥 Support Group 🔥', url=SUPPORT_LINK)
         ]]
-        s = await message.reply_sticker(sticker=random.choice(STICKERS), reply_markup=InlineKeyboardMarkup(btn))
+        s = await message.reply_photo(
+            photo=random.choice(PICS),
+            caption=script.START_TXT,
+            reply_markup=InlineKeyboardMarkup(btn),
+            parse_mode=enums.ParseMode.HTML
+       )
         await asyncio.sleep(30)
         await s.delete()
         try:
