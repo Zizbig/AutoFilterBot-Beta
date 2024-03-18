@@ -5,31 +5,43 @@ from imdb import Cinemagoer
 import asyncio
 from pyrogram.types import Message, InlineKeyboardButton, ChatJoinRequest
 from pyrogram import enums
+from typing import Union
+import re
 import os
-import pytz
-import time, re
 from datetime import datetime
-from typing import List, Any, Union, Optional, AsyncGenerator
+from typing import List, Any
 from database.users_chats_db import db
+from bs4 import BeautifulSoup
+import requests
 from shortzy import Shortzy
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+BTN_URL_REGEX = re.compile(
+    r"(\[([^\[]+?)\]\((buttonurl|buttonalert):(?:/{0,2})(.+?)(:same)?\))"
+)
 
 imdb = Cinemagoer() 
 
-# temp db
+BANNED = {}
+SMART_OPEN = '“'
+SMART_CLOSE = '”'
+START_CHAR = ('\'', '"', SMART_OPEN)
+
+# temp db for banned 
 class temp(object):
-    START_TIME = 0
     BANNED_USERS = []
     BANNED_CHATS = []
     ME = None
+    CURRENT=int(os.environ.get("SKIP", 2))
     CANCEL = False
     U_NAME = None
     B_NAME = None
     SETTINGS = {}
-    VERIFICATIONS = {}
     FILES = {}
     USERS_CANCEL = False
     GROUPS_CANCEL = False
-    BOT = None
 
 async def is_subscribed(bot, query):
     try:
@@ -122,74 +134,55 @@ async def get_poster(query, bulk=False, id=False, file=None):
         'url':f'https://www.imdb.com/title/tt{movieid}'
     }
 
-
-async def is_check_admin(bot, chat_id, user_id):
+async def broadcast_messages(user_id, message):
     try:
-        member = await bot.get_chat_member(chat_id, user_id)
-        return member.status in [enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER]
-    except:
-        return False
-
-
-async def get_verify_status(user_id):
-    verify = temp.VERIFICATIONS.get(user_id)
-    if not verify:
-        verify = await db.get_verify_status(user_id)
-        temp.VERIFICATIONS[user_id] = verify
-    return verify
-
-async def update_verify_status(user_id, verify_token="", is_verified=False, verified_time=0, link=""):
-    current = await get_verify_status(user_id)
-    current['verify_token'] = verify_token
-    current['is_verified'] = is_verified
-    current['verified_time'] = verified_time
-    current['link'] = link
-    temp.VERIFICATIONS[user_id] = current
-    await db.update_verify_status(user_id, current)
-    
-    
-async def broadcast_messages(user_id, message, pin):
-    try:
-        m = await message.copy(chat_id=user_id)
-        if pin:
-            await m.pin(both_sides=True)
-        return "Success"
+        await message.copy(chat_id=user_id)
+        return True, "Success"
     except FloodWait as e:
-        await asyncio.sleep(e.value)
-        return await broadcast_messages(user_id, message, pin)
-    except Exception as e:
+        await asyncio.sleep(e.x)
+        return await broadcast_messages(user_id, message)
+    except InputUserDeactivated:
         await db.delete_user(int(user_id))
-        return "Error"
+        logging.info(f"{user_id}-Removed from Database, since deleted account.")
+        return False, "Deleted"
+    except UserIsBlocked:
+        logging.info(f"{user_id} -Blocked the bot.")
+        return False, "Blocked"
+    except PeerIdInvalid:
+        await db.delete_user(int(user_id))
+        logging.info(f"{user_id} - PeerIdInvalid")
+        return False, "Error"
+    except Exception as e:
+        return False, "Error"
 
-async def groups_broadcast_messages(chat_id, message, pin):
+async def groups_broadcast_messages(chat_id, message):
     try:
         k = await message.copy(chat_id=chat_id)
-        if pin:
-            try:
-                await k.pin()
-            except:
-                pass
-        return "Success"
+        try:
+            await k.pin()
+        except:
+            pass
+        return True, "Success"
     except FloodWait as e:
-        await asyncio.sleep(e.value)
-        return await groups_broadcast_messages(chat_id, message, pin)
+        await asyncio.sleep(e.x)
+        return await groups_broadcast_messages(chat_id, message)
     except Exception as e:
-        await db.delete_chat(chat_id)
-        return "Error"
+        return False, "Error"
+
 
 async def get_settings(group_id):
     settings = temp.SETTINGS.get(group_id)
     if not settings:
         settings = await db.get_settings(group_id)
-        temp.SETTINGS.update({group_id: settings})
+        temp.SETTINGS[group_id] = settings
     return settings
     
 async def save_group_settings(group_id, key, value):
     current = await get_settings(group_id)
-    current.update({key: value})
-    temp.SETTINGS.update({group_id: current})
+    current[key] = value
+    temp.SETTINGS[group_id] = current
     await db.update_settings(group_id, current)
-
+    
 def get_size(size):
     """Get size in readable format"""
 
@@ -207,67 +200,17 @@ def list_to_str(k):
     elif len(k) == 1:
         return str(k[0])
     else:
-        return ', '.join(f'{elem}' for elem in k)
+        return ' '.join(f'{elem}, ' for elem in k)
+
     
-async def get_shortlink(url, api, link):
+async def get_shortlink(group_id, link):
+    settings = await get_settings(group_id)
+    url = settings['url']
+    api = settings['api']
     shortzy = Shortzy(api_key=api, base_site=url)
+
     link = await shortzy.convert(link)
     return link
-
-def get_readable_time(seconds):
-    periods = [('d', 86400), ('h', 3600), ('m', 60), ('s', 1)]
-    result = ''
-    for period_name, period_seconds in periods:
-        if seconds >= period_seconds:
-            period_value, seconds = divmod(seconds, period_seconds)
-            result += f'{int(period_value)}{period_name}'
-    return result
-
-def get_wish():
-    tz = pytz.timezone('Asia/Colombo')
-    time = datetime.now(tz)
-    now = time.strftime("%H")
-    if now < "12":
-        status = "ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ 🌞"
-    elif now < "18":
-        status = "ɢᴏᴏᴅ ᴀꜰᴛᴇʀɴᴏᴏɴ 🌗"
-    else:
-        status = "ɢᴏᴏᴅ ᴇᴠᴇɴɪɴɢ 🌘"
-    return status
-    
-async def get_seconds(time_string):
-    def extract_value_and_unit(ts):
-        value = ""
-        unit = ""
-
-        index = 0
-        while index < len(ts) and ts[index].isdigit():
-            value += ts[index]
-            index += 1
-
-        unit = ts[index:]
-
-        if value:
-            value = int(value)
-
-        return value, unit
-
-    value, unit = extract_value_and_unit(time_string)
-
-    if unit == 's':
-        return value
-    elif unit == 'min':
-        return value * 60
-    elif unit == 'hour':
-        return value * 3600
-    elif unit == 'day':
-        return value * 86400
-    elif unit == 'month':
-        return value * 86400 * 30
-    elif unit == 'year':
-        return value * 86400 * 365
-    else:
-        return 0
 
 
 def get_file_id(msg: Message):
@@ -286,3 +229,12 @@ def get_file_id(msg: Message):
             if obj:
                 setattr(obj, "message_type", message_type)
                 return obj
+
+def get_readable_time(seconds):
+    periods = [('d', 86400), ('h', 3600), ('m', 60), ('s', 1)]
+    result = ''
+    for period_name, period_seconds in periods:
+        if seconds >= period_seconds:
+            period_value, seconds = divmod(seconds, period_seconds)
+            result += f'{int(period_value)}{period_name}'
+    return result
