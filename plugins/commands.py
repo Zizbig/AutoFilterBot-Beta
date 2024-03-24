@@ -49,10 +49,10 @@ async def start(client, message):
         await client.send_message(LOG_CHANNEL, script.NEW_USER_TXT.format(message.from_user.mention, message.from_user.id))
     if len(message.command) != 2:
         buttons = [[
-            InlineKeyboardButton("+ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ +", url=f'http://t.me/{temp.U_NAME}?startgroup=start')
+            InlineKeyboardButton("Add me to Your Group 😶‍🌫️", url=f'http://t.me/{temp.U_NAME}?startgroup=start')
         ],[
-            InlineKeyboardButton('⚡️ ᴏᴡɴᴇʀ', callback_data='my_owner'),
-            InlineKeyboardButton('📚 ᴀʙᴏᴜᴛ', callback_data='my_about')
+            InlineKeyboardButton('⚡️ Owner', callback_data='my_owner'),
+            InlineKeyboardButton('📚 About', callback_data='my_about')
         ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply_photo(
@@ -88,10 +88,10 @@ async def start(client, message):
         return
     if len(message.command) == 2 and message.command[1] in ["subscribe", "error", "okay", "help", "start", "admins"]:
         buttons = [[
-            InlineKeyboardButton("+ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ +", url=f'http://t.me/{temp.U_NAME}?startgroup=start')
+            InlineKeyboardButton("Add me to Your Group 😶‍🌫️", url=f'http://t.me/{temp.U_NAME}?startgroup=start')
         ],[
-            InlineKeyboardButton('⚡️ ᴏᴡɴᴇʀ', callback_data='my_owner'),
-            InlineKeyboardButton('📚 ᴀʙᴏᴜᴛ', callback_data='my_about')
+            InlineKeyboardButton('⚡️ Owner', callback_data='my_owner'),
+            InlineKeyboardButton('📚 About', callback_data='my_about')
         ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply_photo(
@@ -117,7 +117,7 @@ async def start(client, message):
                 file_caption=file.caption
             )   
             btn = [[
-                InlineKeyboardButton("✛ ᴡᴀᴛᴄʜ & ᴅᴏᴡɴʟᴏᴀᴅ ✛", url="https://t.me/APDLinkBot?start=file")
+                InlineKeyboardButton("🔗 Download or Watch Online 🔗", url="https://t.me/APDLinkBot?start=file")
             ]]
             await client.send_cached_media(
                 chat_id=message.from_user.id,
@@ -141,7 +141,7 @@ async def start(client, message):
         file_caption=files.caption
     )
     btn = [[
-        InlineKeyboardButton("✛ ᴡᴀᴛᴄʜ & ᴅᴏᴡɴʟᴏᴀᴅ ✛", url="https://t.me/APDLinkBot?start=file")
+        InlineKeyboardButton("🔗 Download or Watch Online 🔗", url="https://t.me/APDLinkBot?start=file")
     ]]
     await client.send_cached_media(
         chat_id=message.from_user.id,

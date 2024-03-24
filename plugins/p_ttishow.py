@@ -19,7 +19,7 @@ async def new_grp_msg(bot, message):
             ]]
             reply_markup=InlineKeyboardMarkup(buttons)
             k = await message.reply(
-                text='<b><u>Chat Not Allowed</u></b>\n\nMy owner has restricted me from working here! If you want to know more about it contact support group.',
+                text='<b><u>Chat Not Allowed</u></b>\n\nMy owner has restricted me from working here! If you want to know more about it Contact Support group.',
                 reply_markup=reply_markup,
             )
 

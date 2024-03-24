@@ -28,7 +28,7 @@ async def answer(bot, query):
     if AUTH_CHANNEL and not await is_subscribed(bot, query):
         await query.answer(results=[],
                            cache_time=0,
-                           switch_pm_text='Please join my Updates Channel :)',
+                           switch_pm_text='Please join My Updates Channel :)',
                            switch_pm_parameter="subscribe")
         return
 
@@ -93,5 +93,8 @@ def get_reply_markup(query):
     buttons = [[
         InlineKeyboardButton('⚡️ Updates Channel ⚡️', url=UPDATES_LINK),
         InlineKeyboardButton('🔥 Support Group 🔥', url=SUPPORT_LINK)
-    ]]
+    ],[
+        InlineKeyboardButton('Search again 🔍', switch_inline_query_current_chat=query)
+        ]
+    ]
     return InlineKeyboardMarkup(buttons)
