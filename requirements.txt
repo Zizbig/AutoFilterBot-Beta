@@ -10,3 +10,4 @@ cinemagoer
 shortzy
 aiohttp
 pytz
+speedtest-cli
