@@ -8,9 +8,9 @@ from database.ia_filterdb import save_file
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from utils import temp, get_readable_time
 import re, time
-
+ 
 lock = asyncio.Lock()
-
+ 
 @Client.on_callback_query(filters.regex(r'^index'))
 async def index_files(bot, query):
     _, ident, chat, lst_msg_id, skip = query.data.split("#")
@@ -25,8 +25,8 @@ async def index_files(bot, query):
     elif ident == 'cancel':
         temp.CANCEL = True
         await query.message.edit("Trying to cancel Indexing...")
-
-
+ 
+ 
 @Client.on_message(filters.command('index') & filters.private & filters.incoming & filters.user(ADMINS))
 async def send_for_index(bot, message):
     if lock.locked():
@@ -54,10 +54,10 @@ async def send_for_index(bot, message):
         chat = await bot.get_chat(chat_id)
     except Exception as e:
         return await message.reply(f'Errors - {e}')
-
+ 
     if chat.type != enums.ChatType.CHANNEL:
         return await message.reply("I can index only channels.")
-
+ 
     s = await message.reply("Send skip message number.")
     msg = await bot.listen(chat_id=message.chat.id, user_id=message.from_user.id)
     await s.delete()
@@ -65,7 +65,7 @@ async def send_for_index(bot, message):
         skip = int(msg.text)
     except:
         return await message.reply("Number is invalid.")
-
+ 
     buttons = [[
         InlineKeyboardButton('YES', callback_data=f'index#yes#{chat_id}#{last_msg_id}#{skip}')
     ],[
@@ -73,8 +73,8 @@ async def send_for_index(bot, message):
     ]]
     reply_markup = InlineKeyboardMarkup(buttons)
     await message.reply(f'Do you want to index {chat.title} channel?\nTotal Messages: <code>{last_msg_id}</code>', reply_markup=reply_markup)
-
-
+ 
+ 
 async def index_files_to_db(lst_msg_id, chat, msg, bot, skip):
     start_time = time.time()
     total_files = 0
@@ -132,3 +132,4 @@ async def index_files_to_db(lst_msg_id, chat, msg, bot, skip):
             await msg.reply(f'Index canceled due to Error - {e}')
         else:
             await msg.edit(f'Succesfully saved <code>{total_files}</code> to Database!\nCompleted in {time_taken}\n\nDuplicate Files Skipped: <code>{duplicate}</code>\nDeleted Messages Skipped: <code>{deleted}</code>\nNon-Media messages skipped: <code>{no_media + unsupported}</code>\nUnsupported Media: <code>{unsupported}</code>\nErrors Occurred: <code>{errors}</code>\nBad Files Ignoref: <code>{badfiles}</code>')
+ 
