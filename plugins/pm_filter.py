@@ -943,15 +943,14 @@ async def cb_handler(client: Client, query: CallbackQuery):
 
         
     elif query.data.startswith("send_all"):
-        ident, pre, key = query.data.split("#")
-        if int(user) != 0 and query.from_user.id != int(user):
+        ident, key, req = query.data.split("#")
+        if int(req) != query.from_user.id:
             return await query.answer(f"Hello {query.from_user.first_name},\nDon't Click Other Results!", show_alert=True)
         files = temp.FILES.get(key)
         if not files:
             await query.answer(f"Hello {query.from_user.first_name},\nSend New Request Again!", show_alert=True)
             return
-        await query.answer(url=f"https://t.me/{temp.U_NAME}?start=all_{query.message.chat.id}_{pre}_{key}")
-        
+        await query.answer(url=f"https://t.me/{temp.U_NAME}?start=all_{query.message.chat.id}_{key}")
         
 async def auto_filter(client, msg, spoll=False):
     if not spoll:
