@@ -1,5 +1,12 @@
 import re
+import os
+from dotenv import load_dotenv
 from os import environ
+from Script import script 
+
+#Config Stuff
+if os.path.exists('config.env'):
+    load_dotenv('config.env')
 
 id_pattern = re.compile(r'^.\d+$')
 def is_enabled(value, default):
@@ -29,11 +36,11 @@ INDEX_CHANNELS = [int(index_channels) if id_pattern.search(index_channels) else 
 auth_channel = environ.get('AUTH_CHANNEL', '')
 AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_channel) else None
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', ''))
-
+INDEX_REQ_CHANNEL = int(environ.get('INDEX_REQ_CHANNEL', LOG_CHANNEL))
 # MongoDB information
-DATABASE_URL = environ.get('DATABASE_URL', "")
-DATABASE_NAME = environ.get('DATABASE_NAME', "Cluster0")
-COLLECTION_NAME = environ.get('COLLECTION_NAME', 'Files')
+DATABASE_URL = environ.get('DATABASE_URI', 'mongodb+srv://filterbot:pass123@cluster0.rqasnlb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+DATABASE_NAME = environ.get('DATABASE_NAME', "APD")
+COLLECTION_NAME = environ.get('COLLECTION_NAME', 'APD_Files')
 
 # Links
 SUPPORT_LINK = environ.get('SUPPORT_LINK', 'https://t.me/APDBugSupport')
@@ -41,12 +48,12 @@ UPDATES_LINK = environ.get('UPDATES_LINK', 'https://t.me/APDBug')
 
 # Bot settings
 AUTO_FILTER = is_enabled((environ.get('AUTO_FILTER', "True")), True)
-IMDB = is_enabled((environ.get('IMDB', "False")), False)
+IMDB = is_enabled((environ.get('IMDB', 'False')), False)
 SPELL_CHECK = is_enabled(environ.get("SPELL_CHECK", "True"), True)
-SHORTLINK = is_enabled((environ.get('SHORTLINK', "True")), True)
-AUTO_DELETE = is_enabled((environ.get('AUTO_DELETE', "False")), False)
-WELCOME = is_enabled((environ.get('WELCOME', "False")), False)
-PROTECT_CONTENT = is_enabled((environ.get('PROTECT_CONTENT', "False")), False)
+SHORTLINK = is_enabled((environ.get('SHORTLINK', 'False')), False)
+AUTO_DELETE = is_enabled((environ.get('AUTO_DELETE', 'False')), False)
+WELCOME = is_enabled((environ.get('WELCOME', 'False')), False)
+PROTECT_CONTENT = is_enabled((environ.get('PROTECT_CONTENT', 'False')), False)
 LONG_IMDB_DESCRIPTION = is_enabled(environ.get("LONG_IMDB_DESCRIPTION", "False"), False)
 LINK_MODE = is_enabled(environ.get("LINK_MODE", "True"), True)
 USE_CAPTION_FILTER = bool(environ.get('USE_CAPTION_FILTER', True))

@@ -11,3 +11,4 @@ shortzy
 aiohttp
 pytz
 speedtest-cli
+python-dotenv
